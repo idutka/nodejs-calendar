@@ -7,5 +7,5 @@ args.forEach((item) => {
     data[key.substr(1)] = value
 });
 
-module.exports.PORT = process.env.PORT;
+module.exports.PORT = parseInt(process.env.PORT);
 module.exports.ENV = data.env;
