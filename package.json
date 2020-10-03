@@ -2,9 +2,9 @@
   "name": "nodejs-calendar",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "module-1/app.js",
   "scripts": {
-    "start": "PORT=3000 node app.js -env=dev",
+    "start": "PORT=3000 node module-1/app.js -env=dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
