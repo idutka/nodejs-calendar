@@ -8,7 +8,7 @@ node server.js
 * Generate csv file with events data (id, title, location, date, hour, etc)\
  `events.csv`, 
 
-* Create GET /events?location=lviv endpoint which returns events from csv file in json format. It should support possible filtering events by location (passed as query parameter).\
+* Create GET /events?location=lviv endpoint which returns events from csv file in json format. It should support possible filtering events by location (passed as query parameter).
 ###### request:
 ```shell script
 curl --request GET 'http://localhost:3000/events' --header 'Content-Type: application/json'
@@ -49,7 +49,7 @@ curl --request GET 'http://localhost:3000/events?location=lviv' --header 'Conten
 ]
 ```
 
-* Create GET /events/:eventId endpoint for getting some specific event by id.\
+* Create GET /events/:eventId endpoint for getting some specific event by id.
 ###### request:
 ```shell script
 curl --request GET 'http://localhost:3000/events/2' --header 'Content-Type: application/json'
@@ -65,7 +65,7 @@ curl --request GET 'http://localhost:3000/events/2' --header 'Content-Type: appl
 }
 ```
 
-* Create POST /events endpoint for saving new event to the csv file.\
+* Create POST /events endpoint for saving new event to the csv file.
 ###### request:
 ```shell script
 curl --request POST 'http://localhost:3000/events' \
@@ -83,7 +83,7 @@ curl --request POST 'http://localhost:3000/events' \
 }
 ```
 
-* Create PUT /events/:eventId endpoint for replacing specific event data in csv file.\
+* Create PUT /events/:eventId endpoint for replacing specific event data in csv file.
 ###### request:
 ```shell script
 curl --request PUT 'http://localhost:3000/events/3' \
@@ -101,7 +101,7 @@ curl --request PUT 'http://localhost:3000/events/3' \
 }
 ```
 
-* Create GET /events-batch endpoint which returns all events in json format via streaming directly from csv file.\
+* Create GET /events-batch endpoint which returns all events in json format via streaming directly from csv file.
 ###### request:
 ```shell script
 curl --request GET 'http://localhost:3000/events-batch' --header 'Content-Type: application/json'
