@@ -1,30 +1,28 @@
-const fs = require('fs');
-const stream = require('stream');
-
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const PORT = 3000;
 
-const {filePath, getEvents, saveEvents, parseCSV} = require('./utils');
+const {
+  getEventsByLocation,
+  getEventById,
+  addNewEvent,
+  createCSVStream,
+  updateEvent,
+  deleteEventById,
+} = require('./utils');
 
 app.use(bodyParser.json());
 
-app.get('/events', async (req, res, next) => {
-  const events = await getEvents();
-  const location = req.query.location;
-
-  if (location) {
-    return res.json(events.filter(event => event.location.toLowerCase() === location.toLowerCase()));
-  }
-
+app.get('/events', async (req, res) => {
+  const { location } = req.query;
+  const events = await getEventsByLocation(location);
   res.json(events);
 });
 
 app.get('/events/:eventId', async (req, res) => {
-  const events = await getEvents();
-  const eventId = req.params.eventId;
-  const event = events.find(event => event.id.toString() === eventId.toString());
+  const { eventId } = req.params;
+  const event = await getEventById(eventId);
 
   if (!event) {
     return res.sendStatus(404);
@@ -33,60 +31,32 @@ app.get('/events/:eventId', async (req, res) => {
   res.json(event);
 });
 
-app.post('/events', async (req, res, next) => {
-  let events = await getEvents();
-  const {id, title, location, date, hour} = req.body;
+app.post('/events', async (req, res) => {
+  const {title, location, date, hour} = req.body;
 
-  const isEventExist = events.some(event => event.id.toString() === id.toString());
-  if (!id || isEventExist) {
-    return res.sendStatus(400);
-  }
-
+  const id = Math.random().toString().substr(2, 6);
   const newEvent = {id, title, location, date, hour};
-  events.push(newEvent);
-  await saveEvents(events);
+  await addNewEvent(newEvent);
   res.json(newEvent);
 });
 
 app.put('/events/:eventId', async (req, res) => {
-  let events = await getEvents();
-  const eventId = req.params.eventId;
-  const event = events.find(event => event.id.toString() === eventId.toString());
-  if (!event) {
-    return res.sendStatus(404);
-  }
-
+  const id = req.params.eventId;
   const {title, location, date, hour} = req.body;
-
-  event.title = title;
-  event.location = location;
-  event.date = date;
-  event.hour = hour;
-  await saveEvents(events);
-  res.json(event);
+  const newEvent = {id, title, location, date, hour};
+  await updateEvent(id, newEvent);
+  res.json(newEvent);
 });
 
 app.delete('/events/:eventId', async (req, res) => {
-  let events = await getEvents();
   const eventId = req.params.eventId;
-  const event = events.filter(event => event.id.toString() === eventId.toString());
-  if (!event) {
-    return res.sendStatus(404);
-  }
-
-  events = events.filter(event => event.id.toString() !== eventId);
-  await saveEvents(events);
+  await deleteEventById(eventId);
   res.sendStatus(200);
 });
 
 app.get('/events-batch', async (req, res) => {
-  const reader = fs.createReadStream(filePath);
-  const streamParseEvent = new stream.Transform({
-    transform(chunk, encoding, callback) {
-      callback(null, JSON.stringify(parseCSV(chunk.toString())));
-    }
-  });
-  reader.pipe(streamParseEvent).pipe(res.type('json'));
+  const stream = await createCSVStream();
+  stream.pipe(res.type('json'));
 });
 
 app.listen(PORT, () => {
