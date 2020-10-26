@@ -2,9 +2,9 @@
   "name": "nodejs-calendar",
   "version": "1.0.0",
   "description": "",
-  "main": "module-1/app.js",
+  "main": "indexjs",
   "scripts": {
-    "start": "PORT=3000 node module-1/app.js -env=dev",
+    "start": "PORT=3000 node index.js -env=development",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,8 +20,13 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "csv-parse": "^4.12.0",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "joi": "^17.3.0",
+    "pg": "^8.4.1",
+    "pg-hstore": "^2.3.3",
     "proper-lockfile": "^4.1.1",
+    "sequelize": "^6.3.5",
     "winston": "^3.3.3"
   }
 }
