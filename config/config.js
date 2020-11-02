@@ -15,6 +15,11 @@ const ENV = data.env || 'development';
 module.exports.PORT = PORT;
 module.exports.ENV = ENV;
 
+module.exports.ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
+module.exports.ACCESS_TOKEN_LIFE = process.env.ACCESS_TOKEN_LIFE;
+module.exports.REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
+module.exports.REFRESH_TOKEN_LIFE = process.env.REFRESH_TOKEN_LIFE;
+
 const DB_DIALECT = 'postgres';
 const DB_PORT = 5432;
 

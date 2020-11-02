@@ -8,6 +8,7 @@ const db = require('./models');
 const config = require('./config/config');
 const events = require('./routes/events.js');
 const users = require('./routes/users.js');
+const auth = require('./routes/auth.js');
 
 const init = async () => {
   await db.sequelize.sync();
@@ -18,6 +19,7 @@ const init = async () => {
 
   app.use('/events', events.router);
   app.use('/users', users.router);
+  app.use('/', auth.router);
 
   app.listen(config.PORT, () => {
     logger.info(`Server start at port ${config.PORT}`);
