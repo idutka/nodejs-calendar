@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WebSocket</title>
+</head>
+<body>
+
+<span>Select file (up to 100KB)</span>
+<input type="file" id="input">
+
+<ul id="files"></ul>
+
+<script>
+  const files = document.getElementById('files');
+  const appendNewFile = fileName => {
+    const element = `<li><a href="/files/${fileName}" target="_blank">${fileName}</a></li>`
+    files.insertAdjacentHTML('beforeend', element)
+  }
+</script>
+
+<script>
+  const socket = new WebSocket(`ws://${location.host}`);
+
+  const sendMessage = (type, message) => {
+    socket.send(JSON.stringify({type, message}));
+  }
+
+  const sendBinaryData = data => {
+    socket.binaryType = 'arraybuffer';
+    socket.send(data);
+  }
+
+  socket.addEventListener('message', (event) => {
+    try {
+      const data = JSON.parse(event.data);
+
+      switch (data.type) {
+        case 'hello': {
+          console.log(`Hello: ${data.message}`)
+          break;
+        }
+        case 'newFile': {
+          console.log(`New file: ${data.message}`)
+          appendNewFile(data.message)
+          break;
+        }
+        default: {
+          console.log('Unknown message type');
+        }
+      }
+
+    } catch (e) {
+      console.log('Wrong message');
+    }
+  });
+
+  socket.addEventListener('open', () => {
+    sendMessage('hello', 'Hello Server!');
+  });
+
+  const inputElement = document.getElementById("input");
+  inputElement.addEventListener("change", handleFiles, false);
+
+  // todo upload big file
+  function handleFiles() {
+    const file = this.files[0];
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        const arrayBuffer = e.target.result;
+        sendMessage('startFileUpload', file.name);
+        sendBinaryData(arrayBuffer);
+        inputElement.value = ''
+      }
+
+      reader.readAsArrayBuffer(file);
+    }
+  }
+</script>
+
+</body>
+</html>

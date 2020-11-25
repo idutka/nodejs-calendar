@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 
@@ -10,6 +11,10 @@ const events = require('./routes/events.js');
 const users = require('./routes/users.js');
 const auth = require('./routes/auth.js');
 
+const websocket = require('./websocket');
+
+const indexFilePath = path.join(__dirname, 'client', 'index.html');
+
 const init = async () => {
   await db.sequelize.sync();
 
@@ -21,9 +26,16 @@ const init = async () => {
   app.use('/users', users.router);
   app.use('/', auth.router);
 
-  app.listen(config.PORT, () => {
+  app.use('/files', express.static('files'));
+  app.get('/', (req, res) => {
+    res.sendFile(indexFilePath);
+  });
+
+  const server = app.listen(config.PORT, () => {
     logger.info(`Server start at port ${config.PORT}`);
   });
+
+  websocket.init(server);
 }
 
 process.on('unhandledRejection', reason => {
